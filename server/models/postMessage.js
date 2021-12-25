@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 const postSchema = mongoose.Schema({
     name: String,
+    creator: String,
     contact: String,
     profession: String,
     experience: String,
@@ -9,9 +10,9 @@ const postSchema = mongoose.Schema({
     aadhaar: String,
     tags: [String],
     selectedFile: String,
-    likeCount: {
-        type: Number,
-        default: 0
+    likes: {
+        type: [String],
+        default: [],
     },
     createdAt: {
         type: Date,

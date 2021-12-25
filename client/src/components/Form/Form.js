@@ -8,46 +8,57 @@ import { createPost, updatePost } from '../../actions/posts';
 
 const Form = ({currentId, setCurrentId}) => {
     const [postData, setPostData] = useState({
-        name: '', contact: '', profession: '', experience: '', description: '', aadhaar: '', tags: '', selectedFile: ''
+        contact: '', profession: '', experience: '', description: '', aadhaar: '', tags: '', selectedFile: ''
     });
     const post = useSelector(state => currentId ? state.posts.find((p) => p._id === currentId) : null);
     const classes = useStyles();
     const dispatch = useDispatch();
+    const user = JSON.parse(localStorage.getItem('profile'));
 
     useEffect(() => {
         if(post) setPostData(post);
     }, [post])
-
+    
+    const clear = () => {
+        setCurrentId(0);
+        setPostData({
+            contact: '', profession: '', experience: '', description: '', aadhaar: '', tags: '', selectedFile: ''
+        });
+    }
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        if(currentId){
-            dispatch(updatePost(currentId, postData));
+        if(currentId === 0){
+            dispatch(createPost({ ...postData, name: user?.result?.name }));
             clear();
         } else{
-            dispatch(createPost(postData));
+            dispatch(updatePost(currentId, { ...postData, name: user?.result?.name }));
             clear();
         }
     }
 
-    const clear = () => {
-        setCurrentId(null);
-        setPostData({
-            name: '', contact: '', profession: '', experience: '', description: '', aadhaar: '', tags: '', selectedFile: ''
-        });
+
+    if(!user?.result?.name){
+        return (
+            <Paper className={classes.paper}>
+                <Typography variant="h6" align="center">
+                    Please Sign In to create your Job Profile.
+                </Typography>
+            </Paper>
+        )
     }
     
     return (
         <Paper className={classes.paper}>
             <form autoComplete="off" noValidate className={`${classes.root} ${classes.form}`} onSubmit={handleSubmit}>
-                <Typography variant="h4">{currentId ? 'Edit' : 'Enter'} Your Details</Typography>
+                <Typography variant="h4">{currentId ? 'Edit' : 'Create'} Job Profile</Typography>
                 <TextField 
-                name="name" 
+                name="profession" 
                 variant="outlined" 
-                label="Name" 
+                label="Profession" 
                 fullWidth
-                value={postData.name}
-                onChange={(e) => setPostData({ ...postData, name: e.target.value })}
+                value={postData.profession}
+                onChange={(e) => setPostData({ ...postData, profession: e.target.value })}
                 />
                 <TextField 
                 name="contact" 
@@ -56,14 +67,6 @@ const Form = ({currentId, setCurrentId}) => {
                 fullWidth
                 value={postData.contact}
                 onChange={(e) => setPostData({ ...postData, contact: e.target.value })}
-                />
-                <TextField 
-                name="profession" 
-                variant="outlined" 
-                label="Profession" 
-                fullWidth
-                value={postData.profession}
-                onChange={(e) => setPostData({ ...postData, profession: e.target.value })}
                 />
                 <TextField 
                 name="experience" 
@@ -78,6 +81,8 @@ const Form = ({currentId, setCurrentId}) => {
                 variant="outlined" 
                 label="Description" 
                 fullWidth
+                multiline
+                rows={4}
                 value={postData.description}
                 onChange={(e) => setPostData({ ...postData, description: e.target.value })}
                 />
