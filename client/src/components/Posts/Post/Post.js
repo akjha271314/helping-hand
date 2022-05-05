@@ -1,11 +1,12 @@
 import React from 'react';
-import { Card, CardActions, CardContent, CardMedia, Button, Typography } from "@material-ui/core";
+import { Card, CardActions, CardContent, CardMedia, Button, Typography, ButtonBase } from "@material-ui/core";
 import ThumbUpAltOutlined from '@material-ui/icons/ThumbUpAltOutlined';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import DeleteIcon from '@material-ui/icons/Delete';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import moment from 'moment';
 import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 
 import useStyles from './styles';
 import { deletePost, likePost } from '../../../actions/posts';
@@ -13,6 +14,7 @@ import { deletePost, likePost } from '../../../actions/posts';
 const Post = ({ post, setCurrentId }) => {
     const classes = useStyles();
     const dispatch = useDispatch();
+    const history = useHistory();
     const user = JSON.parse(localStorage.getItem('profile'));
 
     const Likes = () => {
@@ -28,8 +30,14 @@ const Post = ({ post, setCurrentId }) => {
         return <><ThumbUpAltOutlined fontSize="small" />&nbsp;Like</>;
       };
 
+      const openPost = () => history.push(`/posts/${post._id}`)
+
     return (
-        <Card className={classes.card}>
+        <Card className={classes.card} raised elevation={6}>
+        <ButtonBase
+        className={classes.cardActions}
+        onClick={openPost}
+        ></ButtonBase>
             <CardMedia className={classes.media} image={post.selectedFile} title={post.profession} />
             <div className={classes.overlay}>
                 <Typography variant="h6">{post.name}</Typography>
